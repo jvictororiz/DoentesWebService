@@ -1,5 +1,6 @@
 package br.com.remedios.dao;
 
+import br.com.remedios.model.Remedio;
 import br.com.remedios.model.Usuario;
 import br.com.remedios.service.ServiceException;
 import br.com.remedios.utils.CalendarUtils;
@@ -17,17 +18,18 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
-public class UsuarioDAO {
+public class RemediosDAO {
 
     private PreparedStatement pst;
     private ResultSet rs;
     private Connection con;
     private String sql;
 
-    public List<Usuario> getUsuarios() throws SQLException, ClassNotFoundException, ServiceException {
-        List<Usuario> usuarios = new ArrayList<>();
+    public List<Remedio> getRemedios() throws SQLException, ClassNotFoundException, ServiceException {
+        List<Remedio> remedios = new ArrayList<>();
+        Remedio remedio = null;
         Usuario usuario = null;
-        sql = "SELECT * FROM  usuario ;";
+        sql = "SELECT * FROM  remedio ;";
         try {
             con = Conexao.conecta();
 
@@ -35,46 +37,32 @@ public class UsuarioDAO {
             rs = pst.executeQuery();
 
             while (rs.next()) {
+                remedio = new Remedio();
                 usuario = new Usuario();
-                usuario.setId(rs.getInt("id"));
-                usuario.setNome(rs.getString("nome"));
-                usuario.setDataNascimento(rs.getDate("dataNascimento"));
-                usuario.setEmail(rs.getString("email"));
-                usuario.setSenha(rs.getString("senha"));
-                usuario.setTelefone(rs.getString("telefone"));
-                usuarios.add(usuario);
+                remedio.setId(rs.getInt("id"));
+                remedio.setDataCadastro(CalendarUtils.convertDate(rs.getDate("dataCadastro")));
+                remedio.setFrequencia(rs.getInt("frequencia"));
+                remedio.setHoraIncial(rs.getDate("horaIncial"));
+                remedio.setNotificar(rs.getBoolean("isNotificar"));
+                remedio.setNotificarCompanheiro(rs.getBoolean("isNotificarCompanheiro"));
+                remedio.setNome(rs.getString("nome"));
+                remedio.setObservacao(rs.getString("observacao"));
+                int id = rs.getInt("usuario_id");
+                usuario = getUser(id);
+                remedio.setUsuario(usuario);
+                remedios.add(remedio);
             }
         }finally {
             Conexao.desconecta();
         }
-            return usuarios;
+            return remedios;
         }
+    
+    private Usuario getUser (int id) throws SQLException, ClassNotFoundException, ServiceException{
+        UsuarioDAO usuarioDAO = new UsuarioDAO();
+        return usuarioDAO.getUser(id);
+    }
 
-    public Usuario getUser(int id) throws SQLException, ClassNotFoundException, ServiceException {
-        Usuario usuario = null;
-        sql = "SELECT * FROM  usuario where id = ? ;";
-        try {
-            usuario = new Usuario();
-            con = Conexao.conecta();
-            pst = con.prepareStatement(sql);
-            pst.setInt(1, id);
-            rs = pst.executeQuery();
-
-            if(rs.next()){
-                usuario = new Usuario();
-                usuario.setId(rs.getInt("id"));
-                usuario.setNome(rs.getString("nome"));
-                usuario.setDataNascimento(rs.getDate("dataNascimento"));
-                usuario.setEmail(rs.getString("email"));
-                usuario.setSenha(rs.getString("senha"));
-                usuario.setTelefone(rs.getString("telefone"));
-            }
-        }finally {
-            Conexao.desconecta();
-            return usuario;
-        }
-            
-        }
     
 
     public void cadastrarUsuario(Usuario usuario) throws MySQLIntegrityConstraintViolationException, ClassNotFoundException, ServiceException,SQLException {
@@ -88,7 +76,7 @@ public class UsuarioDAO {
             pst.setString(3, usuario.getNome());
             pst.setString(4, usuario.getSenha());
             pst.setString(5, usuario.getTelefone());
-            Logger.getLogger(UsuarioDAO.class.getName()).log(Level.SEVERE, null, "deu certo");
+            Logger.getLogger(RemediosDAO.class.getName()).log(Level.SEVERE, null, "deu certo");
             boolean naoSucesso = pst.execute();
             if (naoSucesso) {
                 throw new ServiceException(StatusCode.ERRO_AO_CADASTRAR_USUARIO, "Erro ao cadastrar usuário!");
@@ -138,32 +126,5 @@ public class UsuarioDAO {
             Conexao.desconecta();
         }
 
-    }
-
-    public Usuario logar(String login, String senha) throws SQLException, ClassNotFoundException, ServiceException,MySQLIntegrityConstraintViolationException {
-        Usuario usuario = null;
-        sql = "SELECT * FROM  usuario where email = ? and senha = ? ;";
-        con = Conexao.conecta();
-        pst = con.prepareCall(sql);
-        pst.setString(1, login);
-        pst.setString(2, senha);
-
-        rs = pst.executeQuery();
-
-        if (rs.next()) {
-            usuario = new Usuario();
-            usuario.setEmail(rs.getString("email"));
-            usuario.setNome(rs.getString("nome"));
-            usuario.setDataNascimento(CalendarUtils.convertDate(rs.getDate("dataNascimento")));
-            usuario.setEmail(rs.getString("email"));
-            usuario.setId(rs.getLong("id"));
-            usuario.setSenha(rs.getString("senha"));
-            usuario.setTelefone("telefone");
-
-        } else {
-            throw new ServiceException(StatusCode.NENHUM_USUARIO_ENCONTRADO, "Usuário não cadastrado!");
-        }
-        Conexao.desconecta();
-        return usuario;
     }
 }

@@ -1,6 +1,8 @@
 package br.com.remedios.service;
 
+import br.com.remedios.dao.RemediosDAO;
 import br.com.remedios.dao.UsuarioDAO;
+import br.com.remedios.model.Remedio;
 import br.com.remedios.model.Usuario;
 import br.com.remedios.utils.StatusCode;
 import com.google.gson.Gson;
@@ -21,40 +23,29 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 
-@Path("Usuario")
-public class UsuarioWS {
+@Path("Remedio")
+public class RemedioWS {
 
     @Context
     private UriInfo context;
 
-    public UsuarioWS() {
+    public RemedioWS() {
     }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public String getGson() {
-        return "Funcionando";
+        return "Remedio";
     }
 
     @GET
-    @Path("get/users")
+    @Path("get/remedios")
     @Produces(MediaType.APPLICATION_JSON)
     public String getUsers() throws SQLException, ClassNotFoundException, ServiceException {
         Gson gson = new Gson();
-        List<Usuario> usuarios = new ArrayList<>();
-        UsuarioDAO usuarioDAO = new UsuarioDAO();
-        String gsonString = gson.toJson(usuarioDAO.getUsuarios());
-        return gsonString;
-    }
-    
-    @GET
-    @Path("get/user/{id}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public String getUser(@PathParam("id") int id) throws SQLException, ClassNotFoundException, ServiceException {
-        Gson gson = new Gson();
-        Usuario usuario = new Usuario();
-        UsuarioDAO usuarioDAO = new UsuarioDAO();
-        String gsonString = gson.toJson(usuarioDAO.getUser(id));
+        List<Remedio> remedios = new ArrayList<>();
+        RemediosDAO remediosDAO = new RemediosDAO();
+        String gsonString = gson.toJson(remediosDAO.getRemedios());
         return gsonString;
     }
 

@@ -24,6 +24,7 @@ public class ApplicationConfig extends Application {
 
 
     private void addRestResourceClasses(Set<Class<?>> resources) {
+        resources.add(br.com.remedios.service.RemedioWS.class);
         resources.add(br.com.remedios.service.UsuarioWS.class);
     }
     
