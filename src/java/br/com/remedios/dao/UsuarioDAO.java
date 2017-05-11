@@ -54,7 +54,7 @@ public class UsuarioDAO {
     public int cadastrarUsuario(Usuario usuario) {
         sql = "INSERT INTO usuario (dataNascimento, email, nome, senha, telefone) VALUES (?,?,?,?,?);";
         try {
-            java.sql.Date dataSql = new java.sql.Date(usuario.getDataNascimento().getTime());            
+            java.sql.Date dataSql = new java.sql.Date(usuario.getDataNascimento().getTime());
             con = Conexao.conecta();
             pst = con.prepareStatement(sql);
             pst.setDate(1, dataSql);
@@ -90,16 +90,16 @@ public class UsuarioDAO {
         } catch (SQLException ex) {
             Logger.getLogger(UsuarioDAO.class.getName()).log(Level.SEVERE, null, ex);
             return StatusCode.ERRO_DE_SQL;
-        }finally{
+        } finally {
             Conexao.desconecta();
         }
 
     }
-    
-    public int editarUsuario(Usuario usuario){
+
+    public int editarUsuario(Usuario usuario) {
         sql = "UPDATE usuario SET dataNascimento = ?, email = ?, nome = ?, senha = ?, telefone = ? WHERE id = ?;";
         try {
-            java.sql.Date dataSql = new java.sql.Date(usuario.getDataNascimento().getTime());    
+            java.sql.Date dataSql = new java.sql.Date(usuario.getDataNascimento().getTime());
             con = Conexao.conecta();
             pst = con.prepareCall(sql);
             pst.setDate(1, dataSql);
@@ -109,9 +109,9 @@ public class UsuarioDAO {
             pst.setString(5, usuario.getTelefone());
             pst.setLong(6, usuario.getId());
             int rs = pst.executeUpdate();
-            if(rs == 1){
+            if (rs == 1) {
                 return StatusCode.SUCESSO;
-            }else{
+            } else {
                 return StatusCode.ERRO_AO_EDITAR_USUARIO;
             }
         } catch (ClassNotFoundException ex) {
@@ -121,42 +121,36 @@ public class UsuarioDAO {
         } catch (SQLException ex) {
             Logger.getLogger(UsuarioDAO.class.getName()).log(Level.SEVERE, null, ex);
             return StatusCode.ERRO_DE_SQL;
-        }finally{
+        } finally {
             Conexao.desconecta();
         }
-        
-    }
-    
-    public Usuario logar(String login, String senha) throws SQLException, ClassNotFoundException, ServiceException{
-         Usuario usuario = null ;
-        sql = "SELECT * FROM  usuario where email = ? and senha = ? ;";
-        try {
-            con = Conexao.conecta();
-            pst = con.prepareCall(sql);
-            pst.setString(1, login);
-            pst.setString(2, senha);
-            
-            rs = pst.executeQuery();
-            
-            if(rs.next()){
-               usuario = new Usuario();
-               usuario.setEmail(rs.getString("email"));
-               usuario.setNome(rs.getString("nome"));
-               usuario.setDataNascimento(CalendarUtils.convertDate(rs.getDate("dataNascimento")));
-               usuario.setEmail(rs.getString("email"));
-               usuario.setId(rs.getLong("id"));
-               usuario.setSenha(rs.getString("senha"));
-               usuario.setTelefone("telefone");
-               
-               return usuario;
-            }
 
-        }finally{
-            Conexao.desconecta();
-            if(usuario == null){
-                throw new ServiceException(StatusCode.NENHUM_USUARIO_ENCONTRADO,"Usuário não cadastrado!");
-            }
-            return usuario;
+    }
+
+    public Usuario logar(String login, String senha) throws SQLException, ClassNotFoundException, ServiceException {
+        Usuario usuario = null;
+        sql = "SELECT * FROM  usuario where email = ? and senha = ? ;";
+        con = Conexao.conecta();
+        pst = con.prepareCall(sql);
+        pst.setString(1, login);
+        pst.setString(2, senha);
+
+        rs = pst.executeQuery();
+
+        if (rs.next()) {
+            usuario = new Usuario();
+            usuario.setEmail(rs.getString("email"));
+            usuario.setNome(rs.getString("nome"));
+            usuario.setDataNascimento(CalendarUtils.convertDate(rs.getDate("dataNascimento")));
+            usuario.setEmail(rs.getString("email"));
+            usuario.setId(rs.getLong("id"));
+            usuario.setSenha(rs.getString("senha"));
+            usuario.setTelefone("telefone");
+
+        } else {
+            throw new ServiceException(StatusCode.NENHUM_USUARIO_ENCONTRADO, "Usuário não cadastrado!");
         }
+        Conexao.desconecta();
+        return usuario;
     }
 }

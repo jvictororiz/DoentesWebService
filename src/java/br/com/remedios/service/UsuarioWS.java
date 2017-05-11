@@ -83,27 +83,12 @@ public class UsuarioWS {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/logar/{login}/{senha}")
-    public String logarUsuario (@PathParam("login")String login,@PathParam("senha")String senha ) {
+    public String logarUsuario (@PathParam("login")String login,@PathParam("senha")String senha ) throws SQLException, ServiceException, ClassNotFoundException {
         UsuarioDAO usuarioDAO = new UsuarioDAO();
         Usuario usuario = null;
-        try {
-           usuario = usuarioDAO.logar(login, senha);
-        
+        usuario = usuarioDAO.logar(login, senha);        
         Gson gson = new Gson();
-        if(usuario!= null){
-            return gson.toJson(usuario);
-        }
-        } catch (SQLException ex) {
-            return ex.getMessage();
-        } catch (ClassNotFoundException ex) {
-            return ex.getMessage();
-        } catch (ServiceException ex) {
-            Logger.getLogger(UsuarioWS.class.getName()).log(Level.SEVERE, null, ex);
-            if(ex.getCodigoErro() == StatusCode.NENHUM_USUARIO_ENCONTRADO){
-                return "Nenhum usuário encontrado";
-            }            
-        }
-        return usuario.getNome();
+        return gson.toJson(usuario);
     }
     
 
