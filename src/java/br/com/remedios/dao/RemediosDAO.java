@@ -29,7 +29,7 @@ public class RemediosDAO {
         List<Remedio> remedios = new ArrayList<>();
         Remedio remedio = null;
         Usuario usuario = null;
-        sql = "SELECT * FROM  remedio where id = ?;";
+        sql = "SELECT * FROM  remedio where usuario_id = ?;";
         try {
             con = Conexao.conecta();
             pst = con.prepareStatement(sql);
