@@ -39,13 +39,13 @@ public class RemedioWS {
     }
 
     @GET
-    @Path("get/remedios")
+    @Path("get/remedios/{idUsuario}")
     @Produces(MediaType.APPLICATION_JSON)
-    public String getUsers() throws SQLException, ClassNotFoundException, ServiceException {
+    public String getRemedios(@PathParam("idUsuario") int idUsuario) throws SQLException, ClassNotFoundException, ServiceException {
         Gson gson = new Gson();
         List<Remedio> remedios = new ArrayList<>();
         RemediosDAO remediosDAO = new RemediosDAO();
-        String gsonString = gson.toJson(remediosDAO.getRemedios());
+        String gsonString = gson.toJson(remediosDAO.getRemedios(idUsuario));
         return gsonString;
     }
 
@@ -77,16 +77,4 @@ public class RemedioWS {
         UsuarioDAO usuarioDAO = new UsuarioDAO();
         usuarioDAO.editarUsuario(usuario);
     }
-
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path("/logar/{login}/{senha}")
-    public String logarUsuario(@PathParam("login") String login, @PathParam("senha") String senha) throws SQLException, ClassNotFoundException, ServiceException {
-        UsuarioDAO usuarioDAO = new UsuarioDAO();
-        Usuario usuario = null;
-        usuario = usuarioDAO.logar(login, senha);
-        Gson gson = new Gson();
-        return gson.toJson(usuario);
-    }
-
 }
