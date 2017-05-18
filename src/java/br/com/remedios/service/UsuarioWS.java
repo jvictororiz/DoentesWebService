@@ -4,6 +4,7 @@ import br.com.remedios.dao.UsuarioDAO;
 import br.com.remedios.model.Usuario;
 import br.com.remedios.utils.StatusCode;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.mysql.jdbc.CommunicationsException;
 import com.mysql.jdbc.exceptions.MySQLIntegrityConstraintViolationException;
 import java.sql.SQLException;

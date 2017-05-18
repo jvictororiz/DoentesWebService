@@ -41,7 +41,7 @@ public class RemedioWS {
     @GET
     @Path("get/remedios/{idUsuario}")
     @Produces(MediaType.APPLICATION_JSON)
-    public String getRemedios(@PathParam("idUsuario") int idUsuario) throws SQLException, ClassNotFoundException, ServiceException {
+    public String getRemediosDoUsuario(@PathParam("idUsuario") int idUsuario) throws SQLException, ClassNotFoundException, ServiceException {
         Gson gson = new Gson();
         List<Remedio> remedios = new ArrayList<>();
         RemediosDAO remediosDAO = new RemediosDAO();
@@ -50,31 +50,31 @@ public class RemedioWS {
     }
 
     @POST
-    @Path("/inserirUsuario")
+    @Path("/insereRemedio")
     @Consumes(MediaType.APPLICATION_JSON)
     public void cadastrarUsuario(String content) throws MySQLIntegrityConstraintViolationException, ClassNotFoundException, ServiceException, SQLException {
             Gson gson = new Gson();
-            Usuario usuario = (Usuario) gson.fromJson(content, Usuario.class);
-            UsuarioDAO usuarioDAO = new UsuarioDAO();
-            usuarioDAO.cadastrarUsuario(usuario);
+            Remedio remedio = (Remedio) gson.fromJson(content, Remedio.class);
+            RemediosDAO remedioDAO = new RemediosDAO();
+            remedioDAO.insereRemedio(remedio);
         
     }
 
     @GET
     @Consumes(MediaType.APPLICATION_JSON)
-    @Path("/deltarUsuario/{id}")
+    @Path("/deletaRemedio/{id}")
     public void deletarUsuario(@PathParam("id") int id) throws SQLException, ClassNotFoundException, ServiceException {
-        UsuarioDAO usuarioDAO = new UsuarioDAO();
-        usuarioDAO.deletaUsuario(id);
+        RemediosDAO remedioDAO = new RemediosDAO();
+        remedioDAO.deletaRemedio(id);
     }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    @Path("/alterarUsuario")
+    @Path("/alterarRemedio")
     public void updateUsuario(String content) throws SQLException, ClassNotFoundException, ServiceException {
         Gson gson = new Gson();
-        Usuario usuario = (Usuario) gson.fromJson(content, Usuario.class);
-        UsuarioDAO usuarioDAO = new UsuarioDAO();
-        usuarioDAO.editarUsuario(usuario);
+        Remedio remedio = (Remedio) gson.fromJson(content, Remedio.class);
+        RemediosDAO usuarioDAO = new RemediosDAO();
+        usuarioDAO.alterarRemedio(remedio);
     }
 }

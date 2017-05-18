@@ -11,6 +11,8 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -38,7 +40,7 @@ public class UsuarioDAO {
                 usuario = new Usuario();
                 usuario.setId(rs.getInt("id"));
                 usuario.setNome(rs.getString("nome"));
-                usuario.setDataNascimento(rs.getDate("dataNascimento"));
+                usuario.setDataNascimento(rs.getString("dataNascimento"));
                 usuario.setEmail(rs.getString("email"));
                 usuario.setSenha(rs.getString("senha"));
                 usuario.setTelefone(rs.getString("telefone"));
@@ -64,7 +66,7 @@ public class UsuarioDAO {
                 usuario = new Usuario();
                 usuario.setId(rs.getInt("id"));
                 usuario.setNome(rs.getString("nome"));
-                usuario.setDataNascimento(rs.getDate("dataNascimento"));
+                usuario.setDataNascimento(rs.getString("dataNascimento"));
                 usuario.setEmail(rs.getString("email"));
                 usuario.setSenha(rs.getString("senha"));
                 usuario.setTelefone(rs.getString("telefone"));
@@ -80,15 +82,13 @@ public class UsuarioDAO {
     public void cadastrarUsuario(Usuario usuario) throws MySQLIntegrityConstraintViolationException, ClassNotFoundException, ServiceException,SQLException {
         sql = "INSERT INTO usuario (dataNascimento, email, nome, senha, telefone) VALUES (?,?,?,?,?);";
         try {
-            java.sql.Date dataSql = new java.sql.Date(usuario.getDataNascimento().getTime());
             con = Conexao.conecta();
             pst = con.prepareStatement(sql);
-            pst.setDate(1, dataSql);
+            pst.setString(1, usuario.getDataNascimento());
             pst.setString(2, usuario.getEmail());
             pst.setString(3, usuario.getNome());
             pst.setString(4, usuario.getSenha());
             pst.setString(5, usuario.getTelefone());
-            Logger.getLogger(UsuarioDAO.class.getName()).log(Level.SEVERE, null, "deu certo");
             boolean naoSucesso = pst.execute();
             if (naoSucesso) {
                 throw new ServiceException(StatusCode.ERRO_AO_CADASTRAR_USUARIO, "Erro ao cadastrar usuário!");
@@ -121,10 +121,9 @@ public class UsuarioDAO {
     public void editarUsuario(Usuario usuario) throws SQLException, ClassNotFoundException, ServiceException {
         sql = "UPDATE usuario SET dataNascimento = ?, email = ?, nome = ?, senha = ?, telefone = ? WHERE id = ?;";
         try {
-            java.sql.Date dataSql = new java.sql.Date(usuario.getDataNascimento().getTime());
             con = Conexao.conecta();
             pst = con.prepareCall(sql);
-            pst.setDate(1, dataSql);
+            pst.setString(1, usuario.getDataNascimento());
             pst.setString(2, usuario.getEmail());
             pst.setString(3, usuario.getNome());
             pst.setString(4, usuario.getSenha());
@@ -154,7 +153,7 @@ public class UsuarioDAO {
             usuario = new Usuario();
             usuario.setEmail(rs.getString("email"));
             usuario.setNome(rs.getString("nome"));
-            usuario.setDataNascimento(CalendarUtils.convertDate(rs.getDate("dataNascimento")));
+            usuario.setDataNascimento((rs.getString("dataNascimento")));
             usuario.setEmail(rs.getString("email"));
             usuario.setId(rs.getLong("id"));
             usuario.setSenha(rs.getString("senha"));

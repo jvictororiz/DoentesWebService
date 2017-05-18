@@ -11,7 +11,7 @@ public class Usuario {
     private String nome;
     private String email;
     private String telefone;
-    private Date dataNascimento;
+    private String dataNascimento;
     private String senha;
     private List<Remedio> remedios;
     private List<Acompanhamento> acompanhantes;
@@ -30,7 +30,7 @@ public class Usuario {
     }  
     
 
-    public Usuario(long id, String nome, String email, String telefone, Date dataNascimento, String senha, List<Remedio> remedios) {
+    public Usuario(long id, String nome, String email, String telefone, String dataNascimento, String senha, List<Remedio> remedios) {
         this.id = id;
         this.nome = nome;
         this.email = email;
@@ -79,11 +79,11 @@ public class Usuario {
         this.telefone = telefone;
     }
 
-    public Date getDataNascimento() {
+    public String getDataNascimento() {
         return dataNascimento;
     }
 
-    public void setDataNascimento(Date dataNascimento) {
+    public void setDataNascimento(String dataNascimento) {
         this.dataNascimento = dataNascimento;
     }
 

@@ -13,7 +13,7 @@ public class Remedio implements Serializable{
     private String nome;
     private Tarja tarja;
     private Date dataCadastro;
-    private Date horaIncial;
+    private String horaIncial;
     private String observacao;
     private int frequencia;
     private boolean isNotificar;
@@ -23,7 +23,7 @@ public class Remedio implements Serializable{
     public Remedio() {
     }
 
-    public Remedio(int id, String nome, Tarja tarja, Date dataCadastro, Date horaIncial, String observacao, int frequencia, boolean isNotificar, boolean isNotificarCompanheiro, int idUser) {
+    public Remedio(int id, String nome, Tarja tarja, Date dataCadastro, String horaIncial, String observacao, int frequencia, boolean isNotificar, boolean isNotificarCompanheiro, int idUser) {
         this.id = id;
         this.nome = nome;
         this.tarja = tarja;
@@ -68,11 +68,11 @@ public class Remedio implements Serializable{
         this.dataCadastro = dataCadastro;
     }
 
-    public Date getHoraIncial() {
+    public String getHoraIncial() {
         return horaIncial;
     }
 
-    public void setHoraIncial(Date horaIncial) {
+    public void setHoraIncial(String horaIncial) {
         this.horaIncial = horaIncial;
     }
 

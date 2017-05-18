@@ -42,7 +42,7 @@ public class RemediosDAO {
                 remedio.setId(rs.getInt("id"));
                 remedio.setDataCadastro(CalendarUtils.convertDate(rs.getDate("dataCadastro")));
                 remedio.setFrequencia(rs.getInt("frequencia"));
-                remedio.setHoraIncial(rs.getDate("horaIncial"));
+                remedio.setHoraIncial(rs.getString("horaIncial"));
                 remedio.setIsNotificar(rs.getBoolean("isNotificar"));
                 remedio.setIsNotificarCompanheiro(rs.getBoolean("isNotificarCompanheiro"));
                 remedio.setNome(rs.getString("nome"));
@@ -56,45 +56,40 @@ public class RemediosDAO {
         return remedios;
     }
 
-    private Usuario getUser(int id) throws SQLException, ClassNotFoundException, ServiceException {
-        UsuarioDAO usuarioDAO = new UsuarioDAO();
-        return usuarioDAO.getUser(id);
-    }
-
-    public void cadastrarUsuario(Usuario usuario) throws MySQLIntegrityConstraintViolationException, ClassNotFoundException, ServiceException, SQLException {
-        sql = "INSERT INTO usuario (dataNascimento, email, nome, senha, telefone) VALUES (?,?,?,?,?);";
+    public void insereRemedio(Remedio remedio) throws ClassNotFoundException, ServiceException, SQLException {
+        sql = "INSERT INTO remedio (dataCadastro, frequencia, horaInicial, isNotificar, isNotificarCompanheiro, nome, observacao ,tarja, usuario_id) VALUES (?,?,?,?,?,?,?,?,?);";
         try {
-            java.sql.Date dataSql = new java.sql.Date(usuario.getDataNascimento().getTime());
+            java.sql.Date dataSql = new java.sql.Date(remedio.getDataCadastro().getTime());
             con = Conexao.conecta();
             pst = con.prepareStatement(sql);
             pst.setDate(1, dataSql);
-            pst.setString(2, usuario.getEmail());
-            pst.setString(3, usuario.getNome());
-            pst.setString(4, usuario.getSenha());
-            pst.setString(5, usuario.getTelefone());
-            Logger.getLogger(RemediosDAO.class.getName()).log(Level.SEVERE, null, "deu certo");
+            pst.setInt(2, remedio.getFrequencia());
+            pst.setString(3, remedio.getHoraIncial());
+            pst.setBoolean(4, remedio.isIsNotificar());
+            pst.setBoolean(5, remedio.isIsNotificarCompanheiro());
+            pst.setString(6, remedio.getNome());
+            pst.setString(7, remedio.getObservacao());
+            pst.setString(8, remedio.getTarja().name());
+            pst.setInt(9, remedio.getIdUser());
+            
             boolean naoSucesso = pst.execute();
             if (naoSucesso) {
-                throw new ServiceException(StatusCode.ERRO_AO_CADASTRAR_USUARIO, "Erro ao cadastrar usuário!");
+                throw new ServiceException(StatusCode.ERRO_AO_CADASTRAR_REMEDIO, "Erro ao cadastrar o remédio!");
             }
-        } catch (SQLException ex) {
-            if (ex.getMessage().contains("email_UNIQUE")) {
-                throw new ServiceException(StatusCode.EMAIL_JA_ESTA_SENDO_USADO, "Este email já está sendo usado,\n por favor\n escolha outro");
-            }
-        } finally {
+        }  finally {
             Conexao.desconecta();
         }
     }
 
-    public void deletaUsuario(int id) throws SQLException, ClassNotFoundException, ServiceException {
-        sql = "DELETE FROM usuario WHERE id = ?";
+    public void deletaRemedio(int id) throws SQLException, ClassNotFoundException, ServiceException {
+        sql = "DELETE FROM remedio WHERE id = ?";
         try {
             con = Conexao.conecta();
             pst = con.prepareCall(sql);
             pst.setInt(1, id);
             boolean naoSucesso = pst.execute();
             if (naoSucesso) {
-                throw new ServiceException(StatusCode.ERRO_AO_DELETAR_USUARIO, "Não foi possível deletar este usuário");
+                throw new ServiceException(StatusCode.ERRO_AO_DELETAR_REMEDIO, "Não foi possível deletar este remédio");
             }
         } finally {
             Conexao.desconecta();
@@ -102,21 +97,24 @@ public class RemediosDAO {
 
     }
 
-    public void editarUsuario(Usuario usuario) throws SQLException, ClassNotFoundException, ServiceException {
-        sql = "UPDATE usuario SET dataNascimento = ?, email = ?, nome = ?, senha = ?, telefone = ? WHERE id = ?;";
+    public void alterarRemedio(Remedio remedio) throws SQLException, ClassNotFoundException, ServiceException {
+        sql = "UPDATE remedio SET dataCadastro = ?, frequencia = ? ,horaInicial = ? ,isNotificar = ? ,isNotificarCompanheiro = ?, nome = ? ,observacao = ?,tarja = ? , usuario_id = ? WHERE id = ?;";
         try {
-            java.sql.Date dataSql = new java.sql.Date(usuario.getDataNascimento().getTime());
+            java.sql.Date dataSql = new java.sql.Date(remedio.getDataCadastro().getTime());
             con = Conexao.conecta();
             pst = con.prepareCall(sql);
             pst.setDate(1, dataSql);
-            pst.setString(2, usuario.getEmail());
-            pst.setString(3, usuario.getNome());
-            pst.setString(4, usuario.getSenha());
-            pst.setString(5, usuario.getTelefone());
-            pst.setLong(6, usuario.getId());
+            pst.setInt(2, remedio.getFrequencia());
+            pst.setString(3, remedio.getHoraIncial());
+            pst.setBoolean(4, remedio.isIsNotificar());
+            pst.setBoolean(5, remedio.isIsNotificarCompanheiro());
+            pst.setString(5, remedio.getNome());
+            pst.setString(5, remedio.getObservacao());
+            pst.setString(5, remedio.getTarja().name());
+            pst.setInt(5, remedio.getIdUser());
             int rs = pst.executeUpdate();
             if (rs != 1) {
-                throw new ServiceException(StatusCode.ERRO_AO_EDITAR_USUARIO, "Não foi possível editar este usuário");
+                throw new ServiceException(StatusCode.ERRO_AO_EDITAR_REMEDIO, "Não foi possível editar este rémedio");
             }
         } finally {
             Conexao.desconecta();
