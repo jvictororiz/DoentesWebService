@@ -20,6 +20,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Produces;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 @Path("Usuario")
@@ -70,7 +71,7 @@ public class UsuarioWS {
         
     }
 
-    @GET
+    @GET    
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/deltarUsuario/{id}")
     public void deletarUsuario(@PathParam("id") int id) throws SQLException, ClassNotFoundException, ServiceException {
@@ -88,14 +89,17 @@ public class UsuarioWS {
         usuarioDAO.editarUsuario(usuario);
     }
 
-    @GET
+    @POST
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("/logar/{login}/{senha}")
-    public String logarUsuario(@PathParam("login") String login, @PathParam("senha") String senha) throws SQLException, ClassNotFoundException, ServiceException {
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Path("/logar")
+        public String logarUsuario(String content) throws SQLException, ClassNotFoundException, ServiceException {
+        Gson gson = new Gson();  
+        Usuario request = new Usuario();
+        request = (Usuario) gson.fromJson(content, Usuario.class); 
         UsuarioDAO usuarioDAO = new UsuarioDAO();
-        Usuario usuario = null;
-        usuario = usuarioDAO.logar(login, senha);
-        Gson gson = new Gson();
+        Usuario usuario = new Usuario();
+        usuario = usuarioDAO.logar(request.getEmail(), request.getSenha()); 
         return gson.toJson(usuario);
     }
 

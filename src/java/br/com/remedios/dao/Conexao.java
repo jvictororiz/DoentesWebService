@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 
 //Início da classe de conexão//
 public class Conexao {
-    private static String URL = "jdbc:mysql://localhost/db_appmeusremedios";
+    private static String URL = "jdbc:mysql://127.0.0.1:3306/db_appmeusremedios";
     private static String DRIVER  ="com.mysql.jdbc.Driver";
     private static String USER = "root";
     private static String SENHA = "";
